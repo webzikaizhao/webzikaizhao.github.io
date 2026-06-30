@@ -1,32 +1,1037 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Zikai Zhao</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zikai Zhao | Interpretable ML & Robotics</title>
+  <meta name="description" content="Personal website of Zikai Zhao — student interested in interpretable machine learning, KAN, scientific ML, robotics, and quadrotor dynamics." />
+
+  <style>
+    :root {
+      --bg: #050816;
+      --bg-2: #080b1f;
+      --card: rgba(255, 255, 255, 0.08);
+      --card-strong: rgba(255, 255, 255, 0.13);
+      --text: #f7f7ff;
+      --muted: #b9c1ff;
+      --muted-2: #8790c9;
+      --line: rgba(255, 255, 255, 0.16);
+      --cyan: #59f8ff;
+      --blue: #7b61ff;
+      --pink: #ff4fd8;
+      --orange: #ffb86b;
+      --green: #77ffb4;
+      --shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+      --radius: 28px;
+      --max: 1160px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 18% 20%, rgba(123, 97, 255, 0.34), transparent 33%),
+        radial-gradient(circle at 85% 12%, rgba(89, 248, 255, 0.22), transparent 30%),
+        radial-gradient(circle at 70% 86%, rgba(255, 79, 216, 0.22), transparent 35%),
+        linear-gradient(135deg, var(--bg), #02030a 60%, #09021c);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+      background-size: 46px 46px;
+      mask-image: linear-gradient(to bottom, black, transparent 88%);
+      z-index: -2;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at var(--mx, 50%) var(--my, 30%), rgba(89,248,255,0.12), transparent 28%);
+      z-index: -1;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.045;
+      z-index: 20;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+
+    .orb {
+      position: fixed;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      filter: blur(18px);
+      opacity: 0.45;
+      pointer-events: none;
+      z-index: -1;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .orb.one {
+      left: -110px;
+      top: 130px;
+      background: radial-gradient(circle, rgba(89,248,255,0.7), transparent 65%);
+    }
+
+    .orb.two {
+      right: -140px;
+      top: 440px;
+      background: radial-gradient(circle, rgba(255,79,216,0.65), transparent 65%);
+      animation-delay: -2s;
+    }
+
+    .orb.three {
+      left: 34%;
+      bottom: -180px;
+      background: radial-gradient(circle, rgba(123,97,255,0.7), transparent 65%);
+      animation-delay: -4s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(18px, -28px, 0) scale(1.08); }
+    }
+
+    .container {
+      width: min(var(--max), calc(100% - 42px));
+      margin: 0 auto;
+    }
+
+    .nav {
+      position: sticky;
+      top: 16px;
+      z-index: 10;
+      width: min(var(--max), calc(100% - 42px));
+      margin: 16px auto 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(5, 8, 22, 0.58);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.28);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .logo {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: linear-gradient(135deg, var(--cyan), var(--blue), var(--pink));
+      box-shadow: 0 0 30px rgba(89,248,255,0.38);
+      color: #03040d;
+      font-weight: 950;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-links a {
+      padding: 9px 13px;
+      color: var(--muted);
+      font-size: 14px;
+      border-radius: 999px;
+      transition: 0.25s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      background: rgba(255,255,255,0.09);
+    }
+
+    .hero {
+      min-height: calc(100vh - 86px);
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 42px;
+      align-items: center;
+      padding: 72px 0 52px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 14px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(16px);
+      font-size: 14px;
+    }
+
+    .pulse {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 18px var(--green);
+    }
+
+    h1 {
+      font-size: clamp(48px, 8vw, 98px);
+      line-height: 0.92;
+      letter-spacing: -0.075em;
+      margin-bottom: 22px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, #ffffff, var(--cyan), var(--pink), var(--orange));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 30px rgba(89,248,255,0.12));
+    }
+
+    .subtitle {
+      font-size: clamp(18px, 2.2vw, 24px);
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 720px;
+      margin-bottom: 28px;
+    }
+
+    .subtitle strong {
+      color: #ffffff;
+      font-weight: 750;
+    }
+
+    .actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 26px;
+    }
+
+    .btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.07);
+      color: var(--text);
+      font-weight: 700;
+      transition: 0.25s ease;
+      overflow: hidden;
+    }
+
+    .btn.primary {
+      color: #03040d;
+      border: none;
+      background: linear-gradient(135deg, var(--cyan), var(--pink));
+      box-shadow: 0 18px 44px rgba(89,248,255,0.22);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 48px rgba(0,0,0,0.24);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255,255,255,0.045);
+      font-size: 14px;
+    }
+
+    .visual {
+      position: relative;
+      min-height: 560px;
+      display: grid;
+      place-items: center;
+    }
+
+    .holo-card {
+      position: relative;
+      width: min(100%, 470px);
+      min-height: 560px;
+      border: 1px solid var(--line);
+      border-radius: 38px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.04)),
+        radial-gradient(circle at 50% 0%, rgba(89,248,255,0.22), transparent 45%);
+      backdrop-filter: blur(22px);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transform-style: preserve-3d;
+    }
+
+    .holo-card::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      background: conic-gradient(from 180deg, transparent, rgba(89,248,255,0.5), transparent, rgba(255,79,216,0.48), transparent);
+      opacity: 0.32;
+      filter: blur(24px);
+      animation: spin 8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .terminal {
+      position: relative;
+      margin: 24px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: rgba(2,3,10,0.64);
+      box-shadow: inset 0 0 42px rgba(89,248,255,0.055);
+      z-index: 1;
+    }
+
+    .dots {
+      display: flex;
+      gap: 7px;
+      margin-bottom: 16px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--pink);
+    }
+
+    .dot:nth-child(2) { background: var(--orange); }
+    .dot:nth-child(3) { background: var(--green); }
+
+    .code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      color: #dbe3ff;
+      font-size: 13px;
+      line-height: 1.85;
+      white-space: pre-wrap;
+    }
+
+    .code .k { color: var(--pink); }
+    .code .v { color: var(--cyan); }
+    .code .s { color: var(--green); }
+    .code .c { color: #7d86b6; }
+
+    .network {
+      position: relative;
+      height: 255px;
+      margin: 16px 24px 24px;
+      border-radius: 26px;
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(circle at 25% 30%, rgba(89,248,255,0.16), transparent 28%),
+        radial-gradient(circle at 75% 70%, rgba(255,79,216,0.13), transparent 33%),
+        rgba(255,255,255,0.035);
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .node {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 20px var(--cyan), 0 0 46px rgba(89,248,255,0.3);
+      animation: breathe 2.6s ease-in-out infinite;
+    }
+
+    .node:nth-child(1) { left: 18%; top: 26%; }
+    .node:nth-child(2) { left: 18%; top: 55%; animation-delay: -.7s; }
+    .node:nth-child(3) { left: 43%; top: 19%; animation-delay: -.35s; }
+    .node:nth-child(4) { left: 44%; top: 48%; animation-delay: -.95s; }
+    .node:nth-child(5) { left: 44%; top: 75%; animation-delay: -.2s; }
+    .node:nth-child(6) { left: 72%; top: 35%; animation-delay: -.55s; }
+    .node:nth-child(7) { left: 72%; top: 65%; animation-delay: -1.1s; }
+
+    @keyframes breathe {
+      0%, 100% { transform: scale(1); opacity: .75; }
+      50% { transform: scale(1.45); opacity: 1; }
+    }
+
+    .network svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.72;
+    }
+
+    .section {
+      padding: 76px 0;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    h2 {
+      font-size: clamp(32px, 5vw, 58px);
+      letter-spacing: -0.055em;
+      line-height: 1;
+    }
+
+    .section-title p {
+      max-width: 520px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .card {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 24px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.095), rgba(255,255,255,0.045));
+      backdrop-filter: blur(20px);
+      box-shadow: 0 24px 70px rgba(0,0,0,0.18);
+      overflow: hidden;
+      transition: 0.28s ease;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at var(--x, 50%) var(--y, 0%), rgba(89,248,255,0.16), transparent 36%);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(89,248,255,0.42);
+      background: var(--card-strong);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      margin-bottom: 18px;
+      background: linear-gradient(135deg, rgba(89,248,255,0.22), rgba(255,79,216,0.22));
+      border: 1px solid var(--line);
+      font-size: 24px;
+    }
+
+    .card h3 {
+      font-size: 22px;
+      letter-spacing: -0.025em;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: var(--muted);
+      line-height: 1.72;
+      font-size: 15px;
+    }
+
+    .mini {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .mini span {
+      font-size: 12px;
+      color: #dfe5ff;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.055);
+      border-radius: 999px;
+      padding: 7px 10px;
+    }
+
+    .timeline {
+      position: relative;
+      display: grid;
+      gap: 16px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 22px;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      background: linear-gradient(var(--cyan), var(--pink));
+      opacity: 0.45;
+    }
+
+    .item {
+      position: relative;
+      padding-left: 62px;
+    }
+
+    .item::before {
+      content: "";
+      position: absolute;
+      left: 14px;
+      top: 18px;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px solid var(--cyan);
+      box-shadow: 0 0 24px rgba(89,248,255,0.45);
+    }
+
+    .item .card {
+      padding: 22px;
+    }
+
+    .project {
+      min-height: 290px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .project .tagline {
+      color: #fff;
+      font-weight: 750;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 22px;
+      background: rgba(255,255,255,0.055);
+      backdrop-filter: blur(18px);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: clamp(24px, 4vw, 42px);
+      letter-spacing: -0.05em;
+      background: linear-gradient(90deg, var(--cyan), var(--pink));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .quote {
+      padding: 34px;
+      border-radius: 34px;
+      border: 1px solid rgba(89,248,255,0.25);
+      background:
+        linear-gradient(135deg, rgba(89,248,255,0.12), rgba(255,79,216,0.11)),
+        rgba(255,255,255,0.055);
+      box-shadow: var(--shadow);
+    }
+
+    .quote p {
+      font-size: clamp(21px, 2.8vw, 34px);
+      line-height: 1.45;
+      letter-spacing: -0.035em;
+      color: #fff;
+    }
+
+    .quote small {
+      display: block;
+      margin-top: 18px;
+      color: var(--muted);
+    }
+
+    footer {
+      padding: 44px 0 34px;
+      color: var(--muted-2);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      margin-top: 50px;
+    }
+
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: 0.8s ease;
+    }
+
+    .reveal.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding-top: 52px;
+      }
+
+      .visual {
+        min-height: 480px;
+      }
+
+      .holo-card {
+        min-height: 500px;
+      }
+
+      .grid.three, .grid.two, .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .section-title {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav {
+        border-radius: 24px;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .container, .nav {
+        width: min(100% - 24px, var(--max));
+      }
+
+      .nav-links a {
+        padding: 8px 10px;
+        font-size: 13px;
+      }
+
+      .hero {
+        padding-top: 40px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .terminal {
+        margin: 16px;
+      }
+
+      .network {
+        margin: 16px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <h1>Zikai Zhao</h1>
-  <p>Electrical and Computer Engineering Student</p>
+  <div class="noise"></div>
+  <div class="orb one"></div>
+  <div class="orb two"></div>
+  <div class="orb three"></div>
 
-  <h2>About Me</h2>
-  <p>
-    I am interested in machine learning, interpretable AI, robotics, and control.
-  </p>
+  <nav class="nav">
+    <a class="brand" href="#top" aria-label="Homepage">
+      <span class="logo">Z</span>
+      <span>Zikai Zhao</span>
+    </a>
 
-  <h2>Research Interests</h2>
-  <ul>
-    <li>Interpretable Machine Learning</li>
-    <li>Kolmogorov-Arnold Networks</li>
-    <li>Drone Dynamics and Control</li>
-  </ul>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#research">Research</a>
+      <a href="#projects">Projects</a>
+      <a href="#timeline">Journey</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
 
-  <h2>Projects</h2>
-  <ul>
-    <li>KAN-based Diagnostic Analysis</li>
-    <li>Quadrotor Dynamics Modeling</li>
-  </ul>
+  <main id="top" class="container">
+    <section class="hero">
+      <div class="reveal">
+        <div class="eyebrow"><span class="pulse"></span> Student · Interpretable ML · Robotics</div>
+        <h1>
+          Building<br />
+          <span class="gradient-text">explainable</span><br />
+          intelligent systems.
+        </h1>
+        <p class="subtitle">
+          Hi, I’m <strong>Zikai Zhao</strong> — an engineering student exploring
+          <strong>interpretable machine learning</strong>, <strong>Kolmogorov-Arnold Networks</strong>,
+          scientific ML, and learning-based dynamics modeling for robotics.
+        </p>
 
-  <h2>Contact</h2>
-  <p>Email: your_email@example.com</p>
+        <div class="actions">
+          <a class="btn primary" href="#projects">Explore My Work ✦</a>
+          <a class="btn" href="#contact">Contact Me →</a>
+        </div>
+
+        <div class="chips">
+          <span class="chip">KAN</span>
+          <span class="chip">Explainable AI</span>
+          <span class="chip">Physics-informed ML</span>
+          <span class="chip">Quadrotor Dynamics</span>
+          <span class="chip">Control & Robotics</span>
+        </div>
+      </div>
+
+      <div class="visual reveal">
+        <div class="holo-card" id="tilt">
+          <div class="terminal">
+            <div class="dots">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+            <div class="code"><span class="c">// personal research profile</span>
+<span class="k">const</span> student = {
+  name: <span class="s">"Zikai Zhao"</span>,
+  focus: [<span class="s">"KAN"</span>, <span class="s">"XAI"</span>, <span class="s">"Robotics"</span>],
+  question: <span class="s">"Can models explain themselves?"</span>,
+  mode: <span class="v">curious</span>,
+};</div>
+          </div>
+
+          <div class="network" aria-label="Animated neural network graphic">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="wire" x1="0" x2="1">
+                  <stop offset="0%" stop-color="#59f8ff"/>
+                  <stop offset="100%" stop-color="#ff4fd8"/>
+                </linearGradient>
+              </defs>
+              <path d="M20 30 C35 20, 35 20, 44 23" stroke="url(#wire)" stroke-width=".45" fill="none"/>
+              <path d="M20 30 C33 35, 35 42, 44 50" stroke="url(#wire)" stroke-width=".45" fill="none"/>
+              <path d="M20 30 C33 56, 36 70, 44 78" stroke="url(#wire)" stroke-width=".45" fill="none"/>
+              <path d="M20 58 C34 30, 35 26, 44 23" stroke="url(#wire)" stroke-width=".45" fill="none"/>
+              <path d="M20 58 C35 55, 37 52, 44 50" stroke="url(#wire)" stroke-width=".45" fill="none"/>
+              <path d="M20 58 C33 70, 37 74, 44 78" stroke="url(#wire)" stroke-width=".45" fill="none"/>
+              <path d="M46 23 C57 25, 62 30, 73 38" stroke="url(#wire)" stroke-width=".45" fill="none"/>
+              <path d="M46 50 C58 43, 61 41, 73 38" stroke="url(#wire)" stroke-width=".45" fill="none"/>
+              <path d="M46 78 C58 68, 63 61, 73 67" stroke="url(#wire)" stroke-width=".45" fill="none"/>
+              <path d="M46 50 C58 62, 63 66, 73 67" stroke="url(#wire)" stroke-width=".45" fill="none"/>
+              <path d="M46 23 C60 47, 63 57, 73 67" stroke="url(#wire)" stroke-width=".45" fill="none"/>
+            </svg>
+            <span class="node"></span>
+            <span class="node"></span>
+            <span class="node"></span>
+            <span class="node"></span>
+            <span class="node"></span>
+            <span class="node"></span>
+            <span class="node"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section reveal">
+      <div class="section-title">
+        <h2>About Me</h2>
+        <p>I like systems that are not only powerful, but also understandable. My current interests sit between machine learning theory, engineering intuition, and robotic dynamics.</p>
+      </div>
+
+      <div class="grid three">
+        <article class="card">
+          <div class="icon">🧠</div>
+          <h3>Interpretable ML</h3>
+          <p>I am interested in methods that explain why neural networks make decisions, from attribution methods to hidden-unit diagnostics.</p>
+          <div class="mini"><span>Conductance</span><span>Attribution</span><span>XAI</span></div>
+        </article>
+
+        <article class="card">
+          <div class="icon">〰️</div>
+          <h3>KAN & Functions</h3>
+          <p>I explore Kolmogorov-Arnold Networks as a way to represent learnable functions with more visible internal structure.</p>
+          <div class="mini"><span>Splines</span><span>Symbolic Fit</span><span>Diagnostics</span></div>
+        </article>
+
+        <article class="card">
+          <div class="icon">🚁</div>
+          <h3>Robotics & Dynamics</h3>
+          <p>I am also curious about quadrotor dynamics, hybrid physical/data-driven models, and control-oriented simulation.</p>
+          <div class="mini"><span>Quadrotor</span><span>Control</span><span>Scientific ML</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="research" class="section reveal">
+      <div class="section-title">
+        <h2>Research Interests</h2>
+        <p>My favorite questions are the ones where math, code, and physical intuition all collide.</p>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><strong>XAI</strong><span>Explaining internal representations</span></div>
+        <div class="stat"><strong>KAN</strong><span>Readable function networks</span></div>
+        <div class="stat"><strong>PIML</strong><span>Learning with physical constraints</span></div>
+        <div class="stat"><strong>UAV</strong><span>Dynamics, control, and simulation</span></div>
+      </div>
+    </section>
+
+    <section id="projects" class="section reveal">
+      <div class="section-title">
+        <h2>Featured Projects</h2>
+        <p>These are representative directions. Replace descriptions and links as your work becomes more polished.</p>
+      </div>
+
+      <div class="grid two">
+        <article class="card project">
+          <div>
+            <div class="icon">🔬</div>
+            <h3>KAN Diagnostic Analysis</h3>
+            <p class="tagline">Making internal functions easier to inspect.</p>
+            <p>
+              Exploring how KAN structures can be diagnosed through learned spline functions,
+              symbolic replacement, edge importance, and attribution-style analysis.
+            </p>
+          </div>
+          <div class="mini"><span>Python</span><span>PyTorch</span><span>pykan</span><span>Explainability</span></div>
+        </article>
+
+        <article class="card project">
+          <div>
+            <div class="icon">🚁</div>
+            <h3>Quadrotor Dynamics Modeling</h3>
+            <p class="tagline">Combining first principles with learned residuals.</p>
+            <p>
+              Studying data-driven and hybrid approaches for modeling drone dynamics,
+              aerodynamic effects, disturbance estimation, and simulation-based evaluation.
+            </p>
+          </div>
+          <div class="mini"><span>Dynamics</span><span>Simulation</span><span>Control</span><span>Scientific ML</span></div>
+        </article>
+
+        <article class="card project">
+          <div>
+            <div class="icon">🎮</div>
+            <h3>FPGA Tank Game</h3>
+            <p class="tagline">Hardware-level graphics and interaction.</p>
+            <p>
+              A two-player FPGA game involving HDMI rendering, keyboard input,
+              sprite logic, collision, bullets, walls, and real-time game-state control.
+            </p>
+          </div>
+          <div class="mini"><span>SystemVerilog</span><span>FPGA</span><span>HDMI</span><span>MicroBlaze</span></div>
+        </article>
+
+        <article class="card project">
+          <div>
+            <div class="icon">🧩</div>
+            <h3>Scientific ML Notes</h3>
+            <p class="tagline">Learning by rebuilding ideas from first principles.</p>
+            <p>
+              Notes and small experiments on PINNs, DeepONets, weak forms,
+              finite element ideas, attribution methods, and interpretable modeling.
+            </p>
+          </div>
+          <div class="mini"><span>PINN</span><span>DeepONet</span><span>Weak Form</span><span>Notes</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="timeline" class="section reveal">
+      <div class="section-title">
+        <h2>Journey</h2>
+        <p>A compact academic timeline. You can edit this into your real school/program details later.</p>
+      </div>
+
+      <div class="timeline">
+        <div class="item">
+          <article class="card">
+            <h3>Engineering Student</h3>
+            <p>Building foundations in circuits, systems, machine learning, signal processing, and control.</p>
+          </article>
+        </div>
+
+        <div class="item">
+          <article class="card">
+            <h3>Interpretable ML Exploration</h3>
+            <p>Reading papers on attribution, neuron importance, KAN, and diagnostic methods for neural networks.</p>
+          </article>
+        </div>
+
+        <div class="item">
+          <article class="card">
+            <h3>Robotics & Dynamics Direction</h3>
+            <p>Connecting machine learning with physical systems, especially quadrotor dynamics and simulation.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="quote">
+        <p>“I want models that do not just predict — I want models that can show their reasoning structure.”</p>
+        <small>Current research vibe ✦</small>
+      </div>
+    </section>
+
+    <section id="contact" class="section reveal">
+      <div class="section-title">
+        <h2>Contact</h2>
+        <p>Replace these placeholders with your real links before publishing.</p>
+      </div>
+
+      <div class="grid three">
+        <a class="card" href="mailto:your_email@example.com">
+          <div class="icon">✉️</div>
+          <h3>Email</h3>
+          <p>your_email@example.com</p>
+        </a>
+
+        <a class="card" href="https://github.com/" target="_blank" rel="noreferrer">
+          <div class="icon">💻</div>
+          <h3>GitHub</h3>
+          <p>github.com/your-username</p>
+        </a>
+
+        <a class="card" href="#" target="_blank" rel="noreferrer">
+          <div class="icon">📄</div>
+          <h3>CV</h3>
+          <p>Add your CV PDF link here.</p>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-row">
+      <span>© <span id="year"></span> Zikai Zhao. Built with curiosity.</span>
+      <span>Interpretable ML · KAN · Robotics</span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Cursor glow
+    window.addEventListener("pointermove", (e) => {
+      document.body.style.setProperty("--mx", e.clientX + "px");
+      document.body.style.setProperty("--my", e.clientY + "px");
+    });
+
+    // Reveal animation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add("show");
+      });
+    }, { threshold: 0.14 });
+
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+
+    // Card spotlight
+    document.querySelectorAll(".card").forEach((card) => {
+      card.addEventListener("pointermove", (e) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty("--x", `${e.clientX - rect.left}px`);
+        card.style.setProperty("--y", `${e.clientY - rect.top}px`);
+      });
+    });
+
+    // Hero card tilt
+    const tilt = document.getElementById("tilt");
+    if (tilt) {
+      tilt.addEventListener("pointermove", (e) => {
+        const r = tilt.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        tilt.style.transform = `rotateY(${x * 10}deg) rotateX(${-y * 10}deg)`;
+      });
+      tilt.addEventListener("pointerleave", () => {
+        tilt.style.transform = "rotateY(0deg) rotateX(0deg)";
+      });
+    }
+  </script>
 </body>
 </html>
