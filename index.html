@@ -328,6 +328,116 @@
       to { transform: rotate(360deg); }
     }
 
+
+
+    .profile-photo-wrap {
+      position: relative;
+      z-index: 2;
+      width: 174px;
+      height: 174px;
+      margin: 30px auto 14px;
+      padding: 5px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--cyan), var(--pink), var(--orange));
+      box-shadow:
+        0 0 34px rgba(89, 248, 255, 0.35),
+        0 0 76px rgba(255, 79, 216, 0.22);
+      animation: portraitGlow 3.5s ease-in-out infinite;
+    }
+
+    .profile-photo-wrap::after {
+      content: "";
+      position: absolute;
+      inset: -12px;
+      border-radius: 50%;
+      border: 1px solid rgba(89, 248, 255, 0.22);
+      opacity: 0.8;
+      pointer-events: none;
+    }
+
+    .profile-photo {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 50%;
+      border: 3px solid rgba(5, 8, 22, 0.96);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .profile-fallback {
+      position: absolute;
+      inset: 5px;
+      z-index: -1;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 25%, rgba(89,248,255,0.25), transparent 34%),
+        linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      padding: 18px;
+    }
+
+    @keyframes portraitGlow {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-4px) scale(1.025); }
+    }
+
+
+    .profile-summary {
+      position: relative;
+      z-index: 2;
+      margin: 18px 24px 18px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: rgba(2,3,10,0.64);
+      box-shadow: inset 0 0 42px rgba(89,248,255,0.055);
+      text-align: center;
+    }
+
+    .profile-summary .summary-kicker {
+      color: var(--cyan);
+      font-size: 13px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .profile-summary h3 {
+      font-size: 28px;
+      letter-spacing: -0.04em;
+      margin-bottom: 10px;
+    }
+
+    .profile-summary p {
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 15px;
+      margin-bottom: 15px;
+    }
+
+    .profile-summary .summary-tags {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .profile-summary .summary-tags span {
+      padding: 7px 10px;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 999px;
+      color: #dfe5ff;
+      background: rgba(255,255,255,0.055);
+      font-size: 12px;
+    }
+
     .terminal {
       position: relative;
       margin: 24px;
@@ -770,17 +880,23 @@
 
       <div class="visual reveal">
         <div class="holo-card" id="tilt">
-          <div class="terminal">
-            <div class="dots">
-              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <div class="profile-photo-wrap" aria-label="Profile photo">
+            <span class="profile-fallback">Add<br />headshot.jpg</span>
+            <img class="profile-photo" src="headshot.jpg" alt="Zikai Zhao headshot" />
+          </div>
+
+          <div class="profile-summary">
+            <div class="summary-kicker">Research Profile</div>
+            <h3>Zikai Zhao</h3>
+            <p>
+              Interpretable ML · Kolmogorov-Arnold Networks · Robotics Dynamics
+            </p>
+            <div class="summary-tags">
+              <span>KAN</span>
+              <span>XAI</span>
+              <span>Robotics</span>
+              <span>Scientific ML</span>
             </div>
-            <div class="code"><span class="c">// personal research profile</span>
-<span class="k">const</span> student = {
-  name: <span class="s">"Zikai Zhao"</span>,
-  focus: [<span class="s">"KAN"</span>, <span class="s">"XAI"</span>, <span class="s">"Robotics"</span>],
-  question: <span class="s">"Can models explain themselves?"</span>,
-  mode: <span class="v">curious</span>,
-};</div>
           </div>
 
           <div class="network" aria-label="Animated neural network graphic">
@@ -979,7 +1095,7 @@
         <a class="card" href="cv.pdf" target="_blank" rel="noreferrer">
           <div class="icon">📄</div>
           <h3>CV</h3>
-          <p>Personally CV.</p>
+          <p>Personal CV.</p>
         </a>
       </div>
     </section>
