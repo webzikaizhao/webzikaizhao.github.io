@@ -685,6 +685,45 @@
       margin-bottom: 12px;
     }
 
+    .game-project {
+      grid-column: 1 / -1;
+      min-height: 250px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 30px;
+      color: inherit;
+      background:
+        radial-gradient(circle at 86% 22%, rgba(255,79,216,0.3), transparent 28%),
+        radial-gradient(circle at 12% 85%, rgba(89,248,255,0.24), transparent 34%),
+        linear-gradient(135deg, rgba(10,13,30,0.96), rgba(31,17,58,0.88));
+      border-color: rgba(89,248,255,0.28);
+    }
+
+    .game-project h3 {
+      font-size: clamp(30px, 5vw, 56px);
+      margin-bottom: 12px;
+      letter-spacing: -0.055em;
+    }
+
+    .game-project .game-copy {
+      max-width: 680px;
+    }
+
+    .play-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      border-radius: 999px;
+      color: #050816;
+      background: var(--cyan);
+      box-shadow: 0 0 35px rgba(89,248,255,0.3);
+      font-size: 14px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
     .stats {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -783,6 +822,15 @@
         grid-template-columns: 1fr;
       }
 
+      .game-project {
+        grid-template-columns: 1fr;
+        align-items: start;
+      }
+
+      .play-link {
+        justify-self: start;
+      }
+
       .section-title {
         align-items: flex-start;
         flex-direction: column;
@@ -844,6 +892,7 @@
       <a href="#about">About</a>
       <a href="#research">Research</a>
       <a href="#projects">Projects</a>
+      <a href="hand-playground.html">Play ✦</a>
       <a href="#timeline">Journey</a>
       <a href="#contact">Contact</a>
     </div>
@@ -987,6 +1036,20 @@
       </div>
 
       <div class="grid two">
+        <a class="card game-project" href="hand-playground.html" aria-label="Play HAND DUEL gesture combat game">
+          <div class="game-copy">
+            <div class="icon">⚔️</div>
+            <h3>HAND//DUEL</h3>
+            <p class="tagline">Turn your two hands into a real-time battle.</p>
+            <p>
+              A browser-based gesture combat experiment powered by MediaPipe.
+              Pinch to fire, swing an open palm to slash, and defeat the other hand before your HP runs out.
+            </p>
+            <div class="mini"><span>Computer Vision</span><span>MediaPipe</span><span>Canvas</span><span>Interactive Game</span></div>
+          </div>
+          <span class="play-link">Enter the arena →</span>
+        </a>
+
         <article class="card project">
           <div>
             <div class="icon">🔬</div>
