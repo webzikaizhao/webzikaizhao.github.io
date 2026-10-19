@@ -2,1215 +2,280 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zikai Zhao | Interpretable ML & Robotics</title>
-  <meta name="description" content="Personal website of Zikai Zhao — student interested in interpretable machine learning, KAN, scientific ML, robotics, and quadrotor dynamics." />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f8f7f4" />
+  <meta name="description" content="Zikai Zhao is an engineering student exploring interpretable machine learning, Kolmogorov–Arnold Networks, and learning-based dynamics modeling for robotics." />
+  <title>Zikai Zhao — Machine Learning &amp; Robotics</title>
   <style>
     :root {
-      --bg: #050816;
-      --bg-2: #080b1f;
-      --card: rgba(255, 255, 255, 0.08);
-      --card-strong: rgba(255, 255, 255, 0.13);
-      --text: #f7f7ff;
-      --muted: #b9c1ff;
-      --muted-2: #8790c9;
-      --line: rgba(255, 255, 255, 0.16);
-      --cyan: #59f8ff;
-      --blue: #7b61ff;
-      --pink: #ff4fd8;
-      --orange: #ffb86b;
-      --green: #77ffb4;
-      --shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
-      --radius: 28px;
-      --max: 1160px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      min-height: 100vh;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at 18% 20%, rgba(123, 97, 255, 0.34), transparent 33%),
-        radial-gradient(circle at 85% 12%, rgba(89, 248, 255, 0.22), transparent 30%),
-        radial-gradient(circle at 70% 86%, rgba(255, 79, 216, 0.22), transparent 35%),
-        linear-gradient(135deg, var(--bg), #02030a 60%, #09021c);
-      color: var(--text);
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
-      background-size: 46px 46px;
-      mask-image: linear-gradient(to bottom, black, transparent 88%);
-      z-index: -2;
-    }
-
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background: radial-gradient(circle at var(--mx, 50%) var(--my, 30%), rgba(89,248,255,0.12), transparent 28%);
-      z-index: -1;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .noise {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.045;
-      z-index: 20;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    }
-
-    .orb {
-      position: fixed;
-      width: 340px;
-      height: 340px;
-      border-radius: 50%;
-      filter: blur(18px);
-      opacity: 0.45;
-      pointer-events: none;
-      z-index: -1;
-      animation: float 8s ease-in-out infinite;
-    }
-
-    .orb.one {
-      left: -110px;
-      top: 130px;
-      background: radial-gradient(circle, rgba(89,248,255,0.7), transparent 65%);
-    }
-
-    .orb.two {
-      right: -140px;
-      top: 440px;
-      background: radial-gradient(circle, rgba(255,79,216,0.65), transparent 65%);
-      animation-delay: -2s;
-    }
-
-    .orb.three {
-      left: 34%;
-      bottom: -180px;
-      background: radial-gradient(circle, rgba(123,97,255,0.7), transparent 65%);
-      animation-delay: -4s;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-      50% { transform: translate3d(18px, -28px, 0) scale(1.08); }
-    }
-
-    .container {
-      width: min(var(--max), calc(100% - 42px));
-      margin: 0 auto;
-    }
-
-    .nav {
-      position: sticky;
-      top: 16px;
-      z-index: 10;
-      width: min(var(--max), calc(100% - 42px));
-      margin: 16px auto 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 16px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(5, 8, 22, 0.58);
-      backdrop-filter: blur(18px);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.28);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-
-    .logo {
-      width: 36px;
-      height: 36px;
-      display: grid;
-      place-items: center;
-      border-radius: 13px;
-      background: linear-gradient(135deg, var(--cyan), var(--blue), var(--pink));
-      box-shadow: 0 0 30px rgba(89,248,255,0.38);
-      color: #03040d;
-      font-weight: 950;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .nav-links a {
-      padding: 9px 13px;
-      color: var(--muted);
-      font-size: 14px;
-      border-radius: 999px;
-      transition: 0.25s ease;
-    }
-
-    .nav-links a:hover {
-      color: var(--text);
-      background: rgba(255,255,255,0.09);
-    }
-
-    .hero {
-      min-height: calc(100vh - 86px);
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 42px;
-      align-items: center;
-      padding: 72px 0 52px;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      padding: 9px 14px;
-      margin-bottom: 18px;
-      color: var(--muted);
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      backdrop-filter: blur(16px);
-      font-size: 14px;
-    }
-
-    .pulse {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 18px var(--green);
-    }
-
-    h1 {
-      font-size: clamp(48px, 8vw, 98px);
-      line-height: 0.92;
-      letter-spacing: -0.075em;
-      margin-bottom: 22px;
-    }
-
-    .gradient-text {
-      background: linear-gradient(90deg, #ffffff, var(--cyan), var(--pink), var(--orange));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      filter: drop-shadow(0 0 30px rgba(89,248,255,0.12));
-    }
-
-    .subtitle {
-      font-size: clamp(18px, 2.2vw, 24px);
-      color: var(--muted);
-      line-height: 1.65;
-      max-width: 720px;
-      margin-bottom: 28px;
-    }
-
-    .subtitle strong {
-      color: #ffffff;
-      font-weight: 750;
-    }
-
-    .actions {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-bottom: 26px;
-    }
-
-    .btn {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 13px 18px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.07);
-      color: var(--text);
-      font-weight: 700;
-      transition: 0.25s ease;
-      overflow: hidden;
-    }
-
-    .btn.primary {
-      color: #03040d;
-      border: none;
-      background: linear-gradient(135deg, var(--cyan), var(--pink));
-      box-shadow: 0 18px 44px rgba(89,248,255,0.22);
-    }
-
-    .btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 20px 48px rgba(0,0,0,0.24);
-    }
-
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .chip {
-      padding: 9px 12px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      color: var(--muted);
-      background: rgba(255,255,255,0.045);
-      font-size: 14px;
-    }
-
-    .visual {
-      position: relative;
-      min-height: 560px;
-      display: grid;
-      place-items: center;
-    }
-
-    .holo-card {
-      position: relative;
-      width: min(100%, 470px);
-      min-height: 560px;
-      border: 1px solid var(--line);
-      border-radius: 38px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.04)),
-        radial-gradient(circle at 50% 0%, rgba(89,248,255,0.22), transparent 45%);
-      backdrop-filter: blur(22px);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      transform-style: preserve-3d;
-    }
-
-    .holo-card::before {
-      content: "";
-      position: absolute;
-      inset: -2px;
-      background: conic-gradient(from 180deg, transparent, rgba(89,248,255,0.5), transparent, rgba(255,79,216,0.48), transparent);
-      opacity: 0.32;
-      filter: blur(24px);
-      animation: spin 8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-
-
-    .profile-photo-wrap {
-      position: relative;
-      z-index: 2;
-      width: 174px;
-      height: 174px;
-      margin: 30px auto 14px;
-      padding: 5px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--cyan), var(--pink), var(--orange));
-      box-shadow:
-        0 0 34px rgba(89, 248, 255, 0.35),
-        0 0 76px rgba(255, 79, 216, 0.22);
-      animation: portraitGlow 3.5s ease-in-out infinite;
-    }
-
-    .profile-photo-wrap::after {
-      content: "";
-      position: absolute;
-      inset: -12px;
-      border-radius: 50%;
-      border: 1px solid rgba(89, 248, 255, 0.22);
-      opacity: 0.8;
-      pointer-events: none;
-    }
-
-    .profile-photo {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
-      object-position: center;
-      border-radius: 50%;
-      border: 3px solid rgba(5, 8, 22, 0.96);
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .profile-fallback {
-      position: absolute;
-      inset: 5px;
-      z-index: -1;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 35% 25%, rgba(89,248,255,0.25), transparent 34%),
-        linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
-      color: var(--muted);
-      font-size: 13px;
-      text-align: center;
-      padding: 18px;
-    }
-
-    @keyframes portraitGlow {
-      0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-4px) scale(1.025); }
-    }
-
-
-    .profile-summary {
-      position: relative;
-      z-index: 2;
-      margin: 18px 24px 18px;
-      padding: 22px;
-      border: 1px solid var(--line);
-      border-radius: 26px;
-      background: rgba(2,3,10,0.64);
-      box-shadow: inset 0 0 42px rgba(89,248,255,0.055);
-      text-align: center;
-    }
-
-    .profile-summary .summary-kicker {
-      color: var(--cyan);
-      font-size: 13px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-      font-weight: 800;
-    }
-
-    .profile-summary h3 {
-      font-size: 28px;
-      letter-spacing: -0.04em;
-      margin-bottom: 10px;
-    }
-
-    .profile-summary p {
-      color: var(--muted);
-      line-height: 1.65;
-      font-size: 15px;
-      margin-bottom: 15px;
-    }
-
-    .profile-summary .summary-tags {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .profile-summary .summary-tags span {
-      padding: 7px 10px;
-      border: 1px solid rgba(255,255,255,0.14);
-      border-radius: 999px;
-      color: #dfe5ff;
-      background: rgba(255,255,255,0.055);
-      font-size: 12px;
-    }
-
-    .terminal {
-      position: relative;
-      margin: 24px;
-      padding: 18px;
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      background: rgba(2,3,10,0.64);
-      box-shadow: inset 0 0 42px rgba(89,248,255,0.055);
-      z-index: 1;
-    }
-
-    .dots {
-      display: flex;
-      gap: 7px;
-      margin-bottom: 16px;
-    }
-
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--pink);
-    }
-
-    .dot:nth-child(2) { background: var(--orange); }
-    .dot:nth-child(3) { background: var(--green); }
-
-    .code {
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-      color: #dbe3ff;
-      font-size: 13px;
-      line-height: 1.85;
-      white-space: pre-wrap;
-    }
-
-    .code .k { color: var(--pink); }
-    .code .v { color: var(--cyan); }
-    .code .s { color: var(--green); }
-    .code .c { color: #7d86b6; }
-
-    .network {
-      position: relative;
-      height: 255px;
-      margin: 16px 24px 24px;
-      border-radius: 26px;
-      border: 1px solid var(--line);
-      background:
-        radial-gradient(circle at 25% 30%, rgba(89,248,255,0.16), transparent 28%),
-        radial-gradient(circle at 75% 70%, rgba(255,79,216,0.13), transparent 33%),
-        rgba(255,255,255,0.035);
-      z-index: 1;
-      overflow: hidden;
-    }
-
-    .node {
-      position: absolute;
-      width: 15px;
-      height: 15px;
-      border-radius: 50%;
-      background: #fff;
-      box-shadow: 0 0 20px var(--cyan), 0 0 46px rgba(89,248,255,0.3);
-      animation: breathe 2.6s ease-in-out infinite;
-    }
-
-    .node:nth-child(1) { left: 18%; top: 26%; }
-    .node:nth-child(2) { left: 18%; top: 55%; animation-delay: -.7s; }
-    .node:nth-child(3) { left: 43%; top: 19%; animation-delay: -.35s; }
-    .node:nth-child(4) { left: 44%; top: 48%; animation-delay: -.95s; }
-    .node:nth-child(5) { left: 44%; top: 75%; animation-delay: -.2s; }
-    .node:nth-child(6) { left: 72%; top: 35%; animation-delay: -.55s; }
-    .node:nth-child(7) { left: 72%; top: 65%; animation-delay: -1.1s; }
-
-    @keyframes breathe {
-      0%, 100% { transform: scale(1); opacity: .75; }
-      50% { transform: scale(1.45); opacity: 1; }
-    }
-
-    .network svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0.72;
-    }
-
-    .section {
-      padding: 76px 0;
-    }
-
-    .section-title {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 20px;
-      margin-bottom: 28px;
-    }
-
-    h2 {
-      font-size: clamp(32px, 5vw, 58px);
-      letter-spacing: -0.055em;
-      line-height: 1;
-    }
-
-    .section-title p {
-      max-width: 520px;
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    .grid {
-      display: grid;
-      gap: 18px;
-    }
-
-    .grid.three {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .grid.two {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .card {
-      position: relative;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 24px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.095), rgba(255,255,255,0.045));
-      backdrop-filter: blur(20px);
-      box-shadow: 0 24px 70px rgba(0,0,0,0.18);
-      overflow: hidden;
-      transition: 0.28s ease;
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at var(--x, 50%) var(--y, 0%), rgba(89,248,255,0.16), transparent 36%);
-      opacity: 0;
-      transition: opacity 0.25s ease;
-      pointer-events: none;
-    }
-
-    .card:hover {
-      transform: translateY(-6px);
-      border-color: rgba(89,248,255,0.42);
-      background: var(--card-strong);
-    }
-
-    .card:hover::before {
-      opacity: 1;
-    }
-
-    .icon {
-      width: 48px;
-      height: 48px;
-      display: grid;
-      place-items: center;
-      border-radius: 18px;
-      margin-bottom: 18px;
-      background: linear-gradient(135deg, rgba(89,248,255,0.22), rgba(255,79,216,0.22));
-      border: 1px solid var(--line);
-      font-size: 24px;
-    }
-
-    .card h3 {
-      font-size: 22px;
-      letter-spacing: -0.025em;
-      margin-bottom: 10px;
-    }
-
-    .card p {
-      color: var(--muted);
-      line-height: 1.72;
-      font-size: 15px;
-    }
-
-    .mini {
-      margin-top: 18px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .mini span {
-      font-size: 12px;
-      color: #dfe5ff;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.055);
-      border-radius: 999px;
-      padding: 7px 10px;
-    }
-
-    .timeline {
-      position: relative;
-      display: grid;
-      gap: 16px;
-    }
-
-    .timeline::before {
-      content: "";
-      position: absolute;
-      left: 22px;
-      top: 10px;
-      bottom: 10px;
-      width: 2px;
-      background: linear-gradient(var(--cyan), var(--pink));
-      opacity: 0.45;
-    }
-
-    .item {
-      position: relative;
-      padding-left: 62px;
-    }
-
-    .item::before {
-      content: "";
-      position: absolute;
-      left: 14px;
-      top: 18px;
-      width: 17px;
-      height: 17px;
-      border-radius: 50%;
-      background: var(--bg);
-      border: 2px solid var(--cyan);
-      box-shadow: 0 0 24px rgba(89,248,255,0.45);
-    }
-
-    .item .card {
-      padding: 22px;
-    }
-
-    .project {
-      min-height: 290px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .project .tagline {
-      color: #fff;
-      font-weight: 750;
-      font-size: 16px;
-      margin-bottom: 12px;
-    }
-
-    .game-project {
-      grid-column: 1 / -1;
-      min-height: 250px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: end;
-      gap: 30px;
-      color: inherit;
-      background:
-        radial-gradient(circle at 86% 22%, rgba(255,79,216,0.3), transparent 28%),
-        radial-gradient(circle at 12% 85%, rgba(89,248,255,0.24), transparent 34%),
-        linear-gradient(135deg, rgba(10,13,30,0.96), rgba(31,17,58,0.88));
-      border-color: rgba(89,248,255,0.28);
-    }
-
-    .game-project h3 {
-      font-size: clamp(30px, 5vw, 56px);
-      margin-bottom: 12px;
-      letter-spacing: -0.055em;
-    }
-
-    .game-project .game-copy {
-      max-width: 680px;
-    }
-
-    .play-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 18px;
-      border-radius: 999px;
-      color: #050816;
-      background: var(--cyan);
-      box-shadow: 0 0 35px rgba(89,248,255,0.3);
-      font-size: 14px;
-      font-weight: 850;
-      white-space: nowrap;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-top: 18px;
-    }
-
-    .stat {
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      padding: 22px;
-      background: rgba(255,255,255,0.055);
-      backdrop-filter: blur(18px);
-    }
-
-    .stat strong {
-      display: block;
-      font-size: clamp(24px, 4vw, 42px);
-      letter-spacing: -0.05em;
-      background: linear-gradient(90deg, var(--cyan), var(--pink));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      margin-bottom: 8px;
-    }
-
-    .stat span {
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .quote {
-      padding: 34px;
-      border-radius: 34px;
-      border: 1px solid rgba(89,248,255,0.25);
-      background:
-        linear-gradient(135deg, rgba(89,248,255,0.12), rgba(255,79,216,0.11)),
-        rgba(255,255,255,0.055);
-      box-shadow: var(--shadow);
-    }
-
-    .quote p {
-      font-size: clamp(21px, 2.8vw, 34px);
-      line-height: 1.45;
-      letter-spacing: -0.035em;
-      color: #fff;
-    }
-
-    .quote small {
-      display: block;
-      margin-top: 18px;
-      color: var(--muted);
-    }
-
-    footer {
-      padding: 44px 0 34px;
-      color: var(--muted-2);
-      border-top: 1px solid rgba(255,255,255,0.08);
-      margin-top: 50px;
-    }
-
-    .footer-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(28px);
-      transition: 0.8s ease;
-    }
-
-    .reveal.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
+      color-scheme: light;
+      --paper: #f8f7f4;
+      --ink: #252a2d;
+      --muted: #626b70;
+      --blue: #315e7c;
+      --line: #dcdedb;
+      --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 28px; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.75 var(--sans); -webkit-font-smoothing: antialiased; }
+    ::selection { background: #dbe7ec; color: #183b51; }
+    a { color: var(--blue); text-decoration-thickness: 1px; text-underline-offset: 5px; }
+    a:hover { color: #183d56; }
+    a:focus-visible, summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 6px; border-radius: 2px; }
+    p, h1, h2, h3, figure { margin: 0; }
+    h1, h2, h3 { font-weight: 400; }
+    svg { display: block; max-width: 100%; }
+    .wrap { width: min(1040px, calc(100% - 96px)); margin-inline: auto; }
+    .skip-link { position: absolute; left: 20px; top: -80px; padding: 8px 16px; background: white; z-index: 5; }
+    .skip-link:focus { top: 12px; }
+    .header { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding-block: 29px; border-bottom: 1px solid var(--line); }
+    .wordmark { color: var(--ink); font: 23px/1.2 var(--serif); text-decoration: none; letter-spacing: -.4px; }
+    .nav { display: flex; align-items: center; gap: 29px; font-size: 13px; }
+    .nav a { color: var(--muted); text-decoration: none; }
+    .nav a:hover { color: var(--blue); text-decoration: underline; }
+    .nav .cv-link { color: var(--blue); }
+    .intro { display: grid; grid-template-columns: minmax(0, 1fr) 252px; align-items: center; gap: 90px; padding-block: 78px 76px; }
+    .eyebrow { font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+    h1 { font: 70px/1.13 var(--serif); letter-spacing: -2.8px; margin: 17px 0 21px; }
+    .intro p { max-width: 595px; font-size: 17px; line-height: 1.85; color: #4e575b; }
+    .intro p + p { margin-top: 12px; }
+    .intro strong { color: var(--ink); font-weight: 500; }
+    .profile-links { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 27px; font-size: 13px; }
+    .profile-links a { text-decoration: none; border-bottom: 1px solid #b5c4cb; padding-bottom: 2px; }
+    .arrow { display: inline-block; margin-left: 5px; font-family: var(--sans); font-size: .9em; }
+    .portrait { align-self: center; }
+    .portrait img { width: 252px; height: 308px; object-fit: cover; object-position: center 45%; display: block; border-radius: 4px; }
+    .portrait figcaption { display: flex; justify-content: space-between; gap: 10px; padding-top: 11px; font-size: 11px; color: var(--muted); }
+    .portrait figcaption span:last-child { font-family: var(--serif); font-style: italic; }
+    .section { padding-block: 43px 49px; border-top: 1px solid var(--line); }
+    .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
+    h2 { font: 32px/1.25 var(--serif); letter-spacing: -.7px; }
+    .section-note { font-size: 12px; color: var(--muted); }
+    .research-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 38px; }
+    .research-item { position: relative; padding-top: 16px; border-top: 2px solid #bdccd4; }
+    .research-item h3 { font-size: 15px; font-weight: 600; line-height: 1.5; margin-bottom: 9px; }
+    .research-item p { color: var(--muted); font-size: 14px; line-height: 1.8; }
+    .project { display: grid; grid-template-columns: 238px minmax(0, 1fr); gap: 35px; align-items: center; padding-block: 27px; border-bottom: 1px solid var(--line); }
+    .project:first-of-type { padding-top: 0; }
+    .project:last-of-type { border-bottom: 0; padding-bottom: 0; }
+    .project-visual { background: #edf1f3; border-radius: 3px; overflow: hidden; }
+    .project-visual.warm { background: #eeede6; }
+    .project-visual svg { width: 100%; height: auto; }
+    .project h3 { font: 25px/1.35 var(--serif); letter-spacing: -.4px; margin: 6px 0 9px; }
+    .project p { color: var(--muted); font-size: 14px; line-height: 1.85; max-width: 660px; }
+    .project-type { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--blue); }
+    .project-tools { margin-top: 13px; font-size: 11px; color: var(--muted); word-spacing: 2px; }
+    .small-projects { display: grid; grid-template-columns: 1fr 1fr; gap: 42px; margin-top: 31px; padding-top: 28px; border-top: 1px solid var(--line); }
+    .small-projects h3 { font: 23px/1.4 var(--serif); margin-bottom: 10px; letter-spacing: -.3px; }
+    .small-projects p { color: var(--muted); font-size: 14px; line-height: 1.8; }
+    .experiment { margin-top: 33px; display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 22px; align-items: center; background: #eaf0f3; border: 1px solid #dde5e9; border-radius: 4px; padding: 23px 26px; }
+    .experiment h3 { font-size: 15px; font-weight: 600; line-height: 1.5; }
+    .experiment p { color: var(--muted); font-size: 13px; line-height: 1.7; margin-top: 3px; }
+    .experiment a { white-space: nowrap; font-size: 12px; }
+    .background { display: grid; grid-template-columns: 225px 1fr; gap: 48px; }
+    .background p { color: var(--muted); font-size: 15px; line-height: 1.9; }
+    .background p + p { margin-top: 10px; }
+    .background a { font-size: 13px; display: inline-block; margin-top: 17px; }
+    .contact { display: grid; grid-template-columns: 225px 1fr; gap: 48px; }
+    .contact p { color: var(--muted); font-size: 15px; }
+    .email { display: inline-block; margin-top: 12px; font: 24px/1.5 var(--serif); overflow-wrap: anywhere; }
+    .contact-links { margin-top: 16px; display: flex; gap: 24px; font-size: 12px; }
+    .footer { border-top: 1px solid var(--line); padding-block: 23px 35px; display: flex; justify-content: space-between; gap: 20px; color: var(--muted); font-size: 11px; }
+    .footer a { color: var(--muted); text-decoration: none; }
     @media (max-width: 900px) {
-      .hero {
-        grid-template-columns: 1fr;
-        padding-top: 52px;
-      }
-
-      .visual {
-        min-height: 480px;
-      }
-
-      .holo-card {
-        min-height: 500px;
-      }
-
-      .grid.three, .grid.two, .stats {
-        grid-template-columns: 1fr;
-      }
-
-      .game-project {
-        grid-template-columns: 1fr;
-        align-items: start;
-      }
-
-      .play-link {
-        justify-self: start;
-      }
-
-      .section-title {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .nav {
-        border-radius: 24px;
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .nav-links {
-        justify-content: flex-start;
-      }
+      .wrap { width: calc(100% - 64px); }
+      .intro { gap: 45px; grid-template-columns: minmax(0, 1fr) 220px; padding-block: 56px; }
+      h1 { font-size: 59px; }
+      .intro p { font-size: 15px; }
+      .portrait img { width: 220px; height: 280px; }
+      .research-grid { gap: 24px; }
+      .project { grid-template-columns: 208px minmax(0, 1fr); gap: 28px; }
+      .background, .contact { grid-template-columns: 185px 1fr; gap: 30px; }
     }
-
-    @media (max-width: 560px) {
-      .container, .nav {
-        width: min(100% - 24px, var(--max));
-      }
-
-      .nav-links a {
-        padding: 8px 10px;
-        font-size: 13px;
-      }
-
-      .hero {
-        padding-top: 40px;
-      }
-
-      .card {
-        padding: 20px;
-      }
-
-      .terminal {
-        margin: 16px;
-      }
-
-      .network {
-        margin: 16px;
-      }
+    @media (max-width: 640px) {
+      .wrap { width: calc(100% - 40px); }
+      .header { padding-block: 22px; flex-wrap: wrap; gap: 19px; }
+      .wordmark { font-size: 22px; }
+      .nav { width: 100%; gap: 0; justify-content: space-between; font-size: 12px; }
+      .intro { grid-template-columns: 1fr; gap: 31px; padding-block: 40px; }
+      h1 { font-size: 58px; margin-block: 13px 17px; }
+      .intro p { font-size: 16px; }
+      .profile-links { margin-top: 22px; }
+      .portrait { width: 100%; display: grid; grid-template-columns: 116px 1fr; align-items: end; gap: 20px; }
+      .portrait img { width: 116px; height: 140px; }
+      .portrait figcaption { flex-direction: column; align-items: start; gap: 3px; padding-bottom: 8px; }
+      .section { padding-block: 32px 37px; }
+      h2 { font-size: 29px; }
+      .section-head { margin-bottom: 24px; gap: 12px; flex-wrap: wrap; }
+      .research-grid { grid-template-columns: 1fr; gap: 22px; }
+      .research-item { padding-top: 13px; }
+      .research-item p { max-width: 490px; }
+      .project { grid-template-columns: 1fr; gap: 19px; }
+      .project-visual { max-width: none; }
+      .project-visual svg { height: 180px; }
+      .project h3 { font-size: 25px; }
+      .small-projects { grid-template-columns: 1fr; gap: 25px; }
+      .experiment { grid-template-columns: 1fr; gap: 13px; padding: 23px; }
+      .experiment > svg { display: none; }
+      .experiment a { justify-self: start; }
+      .background, .contact { grid-template-columns: 1fr; gap: 20px; }
+      .email { font-size: clamp(18px, 5.7vw, 24px); }
+      .footer { font-size: 10px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    @media print {
+      body { background: white; font-size: 11pt; }
+      .wrap { width: 100%; }
+      .header, .profile-links, .experiment, .footer, .skip-link { display: none; }
+      .intro { padding-top: 0; gap: 35px; }
+      .section { padding-block: 20px; }
+      .project, .research-item, .small-projects article { break-inside: avoid; }
+      a { color: inherit; }
     }
   </style>
 </head>
-
 <body>
-  <div class="noise"></div>
-  <div class="orb one"></div>
-  <div class="orb two"></div>
-  <div class="orb three"></div>
-
-  <nav class="nav">
-    <a class="brand" href="#top" aria-label="Homepage">
-      <span class="logo">Z</span>
-      <span>Zikai Zhao</span>
-    </a>
-
-    <div class="nav-links">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="header wrap" id="top">
+    <a class="wordmark" href="#top" aria-label="Zikai Zhao — home">Zikai Zhao<span style="color:var(--blue)">.</span></a>
+    <nav class="nav" aria-label="Main navigation">
       <a href="#about">About</a>
       <a href="#research">Research</a>
       <a href="#projects">Projects</a>
-      <a href="hand-playground.html">Play ✦</a>
-      <a href="#timeline">Journey</a>
       <a href="#contact">Contact</a>
-    </div>
-  </nav>
-
-  <main id="top" class="container">
-    <section class="hero">
-      <div class="reveal">
-        <div class="eyebrow"><span class="pulse"></span> Student · Interpretable ML · Robotics</div>
-        <h1>
-          Building<br />
-          <span class="gradient-text">explainable</span><br />
-          intelligent systems.
-        </h1>
-        <p class="subtitle">
-          Hi, I’m <strong>Zikai Zhao</strong> — an engineering student exploring
-          <strong>interpretable machine learning</strong>, <strong>Kolmogorov-Arnold Networks</strong>,
-          scientific ML, and learning-based dynamics modeling for robotics.
-        </p>
-
-        <div class="actions">
-          <a class="btn primary" href="#projects">Explore My Work ✦</a>
-          <a class="btn" href="#contact">Contact Me →</a>
-        </div>
-    <section class="section reveal">
-        <div class="quote">
-          <p>“不好，你是怎么发现这个网站的”</p>
-          <small>Current research vibe ✦</small>
-        </div>
-    </section>
-        <div class="chips">
-          <span class="chip">KAN</span>
-          <span class="chip">Explainable AI</span>
-          <span class="chip">Physics-informed ML</span>
-          <span class="chip">Quadrotor Dynamics</span>
-          <span class="chip">Control & Robotics</span>
+      <a class="cv-link" href="cv.pdf" target="_blank" rel="noopener">CV <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+  <main class="wrap" id="main">
+    <section class="intro" id="about" aria-labelledby="name">
+      <div>
+        <div class="eyebrow">Engineering · Machine Learning · Robotics</div>
+        <h1 id="name">Zikai Zhao</h1>
+        <p>I’m an engineering student interested in how learning systems work, and how we can make them easier to understand.</p>
+        <p>My interests span <strong>interpretable machine learning</strong>, <strong>Kolmogorov–Arnold Networks</strong>, and dynamics modeling for robotics.</p>
+        <div class="profile-links">
+          <a href="mailto:zikai1.23@intl.zju.edu.cn">Email <span class="arrow" aria-hidden="true">↗</span></a>
+          <a href="https://github.com/disclaimerr" target="_blank" rel="noopener noreferrer">GitHub <span class="arrow" aria-hidden="true">↗</span></a>
+          <a href="cv.pdf" target="_blank" rel="noopener">Curriculum vitae <span class="arrow" aria-hidden="true">↗</span></a>
         </div>
       </div>
-
-      <div class="visual reveal">
-        <div class="holo-card" id="tilt">
-          <div class="profile-photo-wrap" aria-label="Profile photo">
-            <span class="profile-fallback">Add<br />headshot.jpg</span>
-            <img class="profile-photo" src="headshot.jpg" alt="Zikai Zhao headshot" />
-          </div>
-
-          <div class="profile-summary">
-            <div class="summary-kicker">Research Profile</div>
-            <h3>Zikai Zhao</h3>
-            <p>
-              Interpretable ML · Kolmogorov-Arnold Networks · Robotics Dynamics
-            </p>
-            <div class="summary-tags">
-              <span>KAN</span>
-              <span>XAI</span>
-              <span>Robotics</span>
-              <span>Scientific ML</span>
-            </div>
-          </div>
-
-          <div class="network" aria-label="Animated neural network graphic">
-            <svg viewBox="0 0 100 100" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="wire" x1="0" x2="1">
-                  <stop offset="0%" stop-color="#59f8ff"/>
-                  <stop offset="100%" stop-color="#ff4fd8"/>
-                </linearGradient>
-              </defs>
-              <path d="M20 30 C35 20, 35 20, 44 23" stroke="url(#wire)" stroke-width=".45" fill="none"/>
-              <path d="M20 30 C33 35, 35 42, 44 50" stroke="url(#wire)" stroke-width=".45" fill="none"/>
-              <path d="M20 30 C33 56, 36 70, 44 78" stroke="url(#wire)" stroke-width=".45" fill="none"/>
-              <path d="M20 58 C34 30, 35 26, 44 23" stroke="url(#wire)" stroke-width=".45" fill="none"/>
-              <path d="M20 58 C35 55, 37 52, 44 50" stroke="url(#wire)" stroke-width=".45" fill="none"/>
-              <path d="M20 58 C33 70, 37 74, 44 78" stroke="url(#wire)" stroke-width=".45" fill="none"/>
-              <path d="M46 23 C57 25, 62 30, 73 38" stroke="url(#wire)" stroke-width=".45" fill="none"/>
-              <path d="M46 50 C58 43, 61 41, 73 38" stroke="url(#wire)" stroke-width=".45" fill="none"/>
-              <path d="M46 78 C58 68, 63 61, 73 67" stroke="url(#wire)" stroke-width=".45" fill="none"/>
-              <path d="M46 50 C58 62, 63 66, 73 67" stroke="url(#wire)" stroke-width=".45" fill="none"/>
-              <path d="M46 23 C60 47, 63 57, 73 67" stroke="url(#wire)" stroke-width=".45" fill="none"/>
-            </svg>
-            <span class="node"></span>
-            <span class="node"></span>
-            <span class="node"></span>
-            <span class="node"></span>
-            <span class="node"></span>
-            <span class="node"></span>
-            <span class="node"></span>
-          </div>
-        </div>
-      </div>
+      <figure class="portrait">
+        <img src="headshot.jpg" width="857" height="1006" alt="Zikai Zhao with a bird perched on his head" fetchpriority="high" />
+        <figcaption><span>A little outside the lab.</span><span>Zikai Zhao</span></figcaption>
+      </figure>
     </section>
 
-    <section id="about" class="section reveal">
-      <div class="section-title">
-        <h2>About Me</h2>
-        <p>I like systems that are not only powerful, but also understandable. My current interests sit between machine learning theory, engineering intuition, and robotic dynamics.</p>
+    <section class="section" id="research" aria-labelledby="research-title">
+      <div class="section-head">
+        <h2 id="research-title">Research interests</h2>
+        <span class="section-note">What I’m thinking about</span>
       </div>
-
-      <div class="grid three">
-        <article class="card">
-          <div class="icon">🧠</div>
-          <h3>Interpretable ML</h3>
-          <p>I am interested in methods that explain why neural networks make decisions, from attribution methods to hidden-unit diagnostics.</p>
-          <div class="mini"><span>Conductance</span><span>Attribution</span><span>XAI</span></div>
+      <div class="research-grid">
+        <article class="research-item">
+          <h3>Interpretable machine learning</h3>
+          <p>Attribution, hidden-unit diagnostics, and ways to understand the internal representations of neural networks.</p>
         </article>
-
-        <article class="card">
-          <div class="icon">〰️</div>
-          <h3>KAN & Functions</h3>
-          <p>I explore Kolmogorov-Arnold Networks as a way to represent learnable functions with more visible internal structure.</p>
-          <div class="mini"><span>Splines</span><span>Symbolic Fit</span><span>Diagnostics</span></div>
+        <article class="research-item">
+          <h3>Kolmogorov–Arnold Networks</h3>
+          <p>Learned spline functions, symbolic representations, and what a network’s structure can tell us about its behavior.</p>
         </article>
-
-        <article class="card">
-          <div class="icon">🚁</div>
-          <h3>Robotics & Dynamics</h3>
-          <p>I am also curious about quadrotor dynamics, hybrid physical/data-driven models, and control-oriented simulation.</p>
-          <div class="mini"><span>Quadrotor</span><span>Control</span><span>Scientific ML</span></div>
+        <article class="research-item">
+          <h3>Robotics &amp; dynamics</h3>
+          <p>Quadrotor dynamics and hybrid models that combine physical knowledge with learning from data.</p>
         </article>
       </div>
     </section>
 
-    <section id="research" class="section reveal">
-      <div class="section-title">
-        <h2>Research Interests</h2>
-        <p>My favorite questions are the ones where math, code, and physical intuition all collide.</p>
+    <section class="section" id="projects" aria-labelledby="projects-title">
+      <div class="section-head">
+        <h2 id="projects-title">Selected work</h2>
+        <span class="section-note">Projects &amp; explorations</span>
       </div>
+      <article class="project">
+        <figure class="project-visual" aria-label="Conceptual diagram of learned functions in a Kolmogorov–Arnold Network">
+          <svg viewBox="0 0 300 210" role="img" aria-labelledby="kan-title">
+            <title id="kan-title">A network with learnable functions on its connections</title>
+            <g fill="none" stroke="#b7c8d2" stroke-width="1.2">
+              <path d="M42 60L144 45M42 60L144 105M42 60L144 165M42 150L144 45M42 150L144 105M42 150L144 165M156 45L258 105M156 105H258M156 165L258 105"/>
+            </g>
+            <g fill="#edf1f3" stroke="#6c899b" stroke-width="1.5">
+              <rect x="76" y="34" width="34" height="31" rx="2"/><rect x="76" y="91" width="34" height="31" rx="2"/><rect x="76" y="145" width="34" height="31" rx="2"/>
+              <rect x="191" y="62" width="34" height="31" rx="2"/><rect x="191" y="122" width="34" height="31" rx="2"/>
+            </g>
+            <g fill="none" stroke="#315e7c" stroke-width="1.7" stroke-linecap="round">
+              <path d="M81 57C85 57 87 41 93 41S100 59 105 43M81 114C89 93 96 120 105 98M81 168C89 169 96 151 105 151M196 86C199 63 215 91 220 69M196 145C200 145 205 128 210 128S216 143 220 132"/>
+            </g>
+            <g fill="#f8f7f4" stroke="#315e7c" stroke-width="1.5"><circle cx="36" cy="60" r="6"/><circle cx="36" cy="150" r="6"/><circle cx="150" cy="45" r="6"/><circle cx="150" cy="105" r="6"/><circle cx="150" cy="165" r="6"/><circle cx="264" cy="105" r="6"/></g>
+            <text x="150" y="197" text-anchor="middle" fill="#667e8c" font-family="Georgia,serif" font-size="10" font-style="italic">learnable functions on edges</text>
+          </svg>
+        </figure>
+        <div>
+          <div class="project-type">Machine learning / Interpretability</div>
+          <h3>KAN diagnostic analysis</h3>
+          <p>Exploring learned spline functions, symbolic replacement, edge importance, and attribution to better inspect the internal structure of Kolmogorov–Arnold Networks.</p>
+          <div class="project-tools">Python · PyTorch · pykan</div>
+        </div>
+      </article>
+      <article class="project">
+        <figure class="project-visual warm" aria-label="Conceptual quadrotor dynamics diagram">
+          <svg viewBox="0 0 300 210" role="img" aria-labelledby="drone-title">
+            <title id="drone-title">A quadrotor with body axes and a flight trajectory</title>
+            <g fill="none" stroke="#d4d5cc" stroke-width="1"><path d="M25 155L147 90L280 146M47 167L169 102M72 178L194 113M98 190L220 125M25 132L151 190M53 117L180 177M82 102L208 164"/></g>
+            <path d="M30 112C62 48 102 70 149 92S231 139 269 52" fill="none" stroke="#a5afa1" stroke-width="1.3" stroke-dasharray="4 5"/>
+            <g fill="none" stroke="#667a70" stroke-width="2"><path d="M103 80L197 136M105 135L195 81"/><ellipse cx="102" cy="79" rx="25" ry="12"/><ellipse cx="197" cy="80" rx="25" ry="12"/><ellipse cx="103" cy="136" rx="25" ry="12"/><ellipse cx="198" cy="136" rx="25" ry="12"/></g>
+            <path d="M136 98L150 91L165 100V118L150 125L136 117Z" fill="#e1e5dc" stroke="#667a70" stroke-width="1.4"/>
+            <g fill="none" stroke="#315e7c" stroke-width="1.4"><path d="M150 108V48M146 54L150 48L154 54M150 108L196 107M190 103L196 107L190 111M150 108L127 130M127 124L127 130L133 130"/></g>
+            <g fill="#315e7c" font-family="Georgia,serif" font-size="11" font-style="italic"><text x="155" y="47">z</text><text x="201" y="110">x</text><text x="117" y="139">y</text></g>
+            <text x="150" y="197" text-anchor="middle" fill="#718071" font-family="Georgia,serif" font-size="10" font-style="italic">physics + learned dynamics</text>
+          </svg>
+        </figure>
+        <div>
+          <div class="project-type">Robotics / Scientific machine learning</div>
+          <h3>Quadrotor dynamics modeling</h3>
+          <p>Studying data-driven and hybrid approaches to drone dynamics, with an interest in aerodynamic effects, learned residuals, disturbance estimation, and simulation.</p>
+          <div class="project-tools">Dynamics · Simulation · Control</div>
+        </div>
+      </article>
+      <div class="small-projects">
+        <article>
+          <h3>FPGA tank game</h3>
+          <p>A two-player hardware game bringing together HDMI rendering, keyboard input, sprite logic, collision detection, and real-time game-state control.</p>
+          <div class="project-tools">SystemVerilog · FPGA · MicroBlaze</div>
+        </article>
+        <article>
+          <h3>Scientific ML notes</h3>
+          <p>Notes and small experiments on physics-informed networks, DeepONets, weak forms, finite element methods, and interpretable modeling.</p>
+          <div class="project-tools">PINNs · DeepONet · Numerical methods</div>
+        </article>
+      </div>
+      <aside class="experiment" aria-labelledby="experiment-title">
+        <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true"><circle cx="17" cy="28" r="12" stroke="#5b7c91" stroke-width="1.3"/><circle cx="39" cy="28" r="12" stroke="#93a9a1" stroke-width="1.3"/><path d="M13 28H21M35 28H43M17 24V32M39 24V32" stroke="#5b7c91" stroke-width="1.3"/></svg>
+        <div><h3 id="experiment-title">A small experiment: HAND//DUEL</h3><p>A browser game controlled with two hands, built with MediaPipe and Canvas.</p></div>
+        <a href="hand-playground.html">Try it out <span class="arrow" aria-hidden="true">↗</span></a>
+      </aside>
+    </section>
 
-      <div class="stats">
-        <div class="stat"><strong>XAI</strong><span>Explaining internal representations</span></div>
-        <div class="stat"><strong>KAN</strong><span>Readable function networks</span></div>
-        <div class="stat"><strong>PIML</strong><span>Learning with physical constraints</span></div>
-        <div class="stat"><strong>UAV</strong><span>Dynamics, control, and simulation</span></div>
+    <section class="section background" id="timeline" aria-labelledby="background-title">
+      <h2 id="background-title">Background</h2>
+      <div>
+        <p>My engineering studies cover circuits, systems, signal processing, machine learning, and control. Alongside coursework, I’m exploring attribution methods, KAN diagnostics, and learning-based models of physical systems.</p>
+        <p>I’m particularly interested in the connection between mathematical models, code, and the behavior of real robotic systems.</p>
+        <a href="cv.pdf" target="_blank" rel="noopener">View my curriculum vitae <span class="arrow" aria-hidden="true">↗</span></a>
       </div>
     </section>
 
-    <section id="projects" class="section reveal">
-      <div class="section-title">
-        <h2>Featured Projects</h2>
-        <p>These are representative directions. Replace descriptions and links as your work becomes more polished.</p>
-      </div>
-
-      <div class="grid two">
-        <a class="card game-project" href="hand-playground.html" aria-label="Play HAND DUEL gesture combat game">
-          <div class="game-copy">
-            <div class="icon">⚔️</div>
-            <h3>HAND//DUEL</h3>
-            <p class="tagline">Turn your two hands into a real-time battle.</p>
-            <p>
-              A browser-based gesture combat experiment powered by MediaPipe.
-              Pinch to fire, swing an open palm to slash, and defeat the other hand before your HP runs out.
-            </p>
-            <div class="mini"><span>Computer Vision</span><span>MediaPipe</span><span>Canvas</span><span>Interactive Game</span></div>
-          </div>
-          <span class="play-link">Enter the arena →</span>
-        </a>
-
-        <article class="card project">
-          <div>
-            <div class="icon">🔬</div>
-            <h3>KAN Diagnostic Analysis</h3>
-            <p class="tagline">Making internal functions easier to inspect.</p>
-            <p>
-              Exploring how KAN structures can be diagnosed through learned spline functions,
-              symbolic replacement, edge importance, and attribution-style analysis.
-            </p>
-          </div>
-          <div class="mini"><span>Python</span><span>PyTorch</span><span>pykan</span><span>Explainability</span></div>
-        </article>
-
-        <article class="card project">
-          <div>
-            <div class="icon">🚁</div>
-            <h3>Quadrotor Dynamics Modeling</h3>
-            <p class="tagline">Combining first principles with learned residuals.</p>
-            <p>
-              Studying data-driven and hybrid approaches for modeling drone dynamics,
-              aerodynamic effects, disturbance estimation, and simulation-based evaluation.
-            </p>
-          </div>
-          <div class="mini"><span>Dynamics</span><span>Simulation</span><span>Control</span><span>Scientific ML</span></div>
-        </article>
-
-        <article class="card project">
-          <div>
-            <div class="icon">🎮</div>
-            <h3>FPGA Tank Game</h3>
-            <p class="tagline">Hardware-level graphics and interaction.</p>
-            <p>
-              A two-player FPGA game involving HDMI rendering, keyboard input,
-              sprite logic, collision, bullets, walls, and real-time game-state control.
-            </p>
-          </div>
-          <div class="mini"><span>SystemVerilog</span><span>FPGA</span><span>HDMI</span><span>MicroBlaze</span></div>
-        </article>
-
-        <article class="card project">
-          <div>
-            <div class="icon">🧩</div>
-            <h3>Scientific ML Notes</h3>
-            <p class="tagline">Learning by rebuilding ideas from first principles.</p>
-            <p>
-              Notes and small experiments on PINNs, DeepONets, weak forms,
-              finite element ideas, attribution methods, and interpretable modeling.
-            </p>
-          </div>
-          <div class="mini"><span>PINN</span><span>DeepONet</span><span>Weak Form</span><span>Notes</span></div>
-        </article>
-      </div>
-    </section>
-
-    <section id="timeline" class="section reveal">
-      <div class="section-title">
-        <h2>Journey</h2>
-        <p>A compact academic timeline. You can edit this into your real school/program details later.</p>
-      </div>
-
-      <div class="timeline">
-        <div class="item">
-          <article class="card">
-            <h3>Engineering Student</h3>
-            <p>Building foundations in circuits, systems, machine learning, signal processing, and control.</p>
-          </article>
-        </div>
-
-        <div class="item">
-          <article class="card">
-            <h3>Interpretable ML Exploration</h3>
-            <p>Reading papers on attribution, neuron importance, KAN, and diagnostic methods for neural networks.</p>
-          </article>
-        </div>
-
-        <div class="item">
-          <article class="card">
-            <h3>Robotics & Dynamics Direction</h3>
-            <p>Connecting machine learning with physical systems, especially quadrotor dynamics and simulation.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-
-
-    <section id="contact" class="section reveal">
-      <div class="section-title">
-        <h2>Contact</h2>
-        <p>Replace these placeholders with your real links before publishing.</p>
-      </div>
-
-      <div class="grid three">
-        <a class="card" href="mailto:zikai1.23@intl.zju.edu.cn">
-          <div class="icon">✉️</div>
-          <h3>Email</h3>
-          <p>zikai1.23@intl.zju.edu.cn</p>
-        </a>
-
-        <a class="card" href="https://github.com/disclaimerr" target="_blank" rel="noreferrer">
-          <div class="icon">💻</div>
-          <h3>GitHub</h3>
-          <p>Disclaimerr</p>
-        </a>
-
-        <a class="card" href="cv.pdf" target="_blank" rel="noreferrer">
-          <div class="icon">📄</div>
-          <h3>CV</h3>
-          <p>Personal CV.</p>
-        </a>
+    <section class="section contact" id="contact" aria-labelledby="contact-title">
+      <h2 id="contact-title">Get in touch</h2>
+      <div>
+        <p>For questions about my work or to exchange ideas:</p>
+        <a class="email" href="mailto:zikai1.23@intl.zju.edu.cn">zikai1.23@intl.zju.edu.cn</a>
+        <div class="contact-links"><a href="https://github.com/disclaimerr" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a><a href="cv.pdf" target="_blank" rel="noopener">CV <span aria-hidden="true">↗</span></a></div>
       </div>
     </section>
   </main>
-
-  <footer>
-    <div class="container footer-row">
-      <span>© <span id="year"></span> Zikai Zhao. Built with curiosity.</span>
-      <span>Interpretable ML · KAN · Robotics</span>
-    </div>
-  </footer>
-
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-
-    // Cursor glow
-    window.addEventListener("pointermove", (e) => {
-      document.body.style.setProperty("--mx", e.clientX + "px");
-      document.body.style.setProperty("--my", e.clientY + "px");
-    });
-
-    // Reveal animation
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) entry.target.classList.add("show");
-      });
-    }, { threshold: 0.14 });
-
-    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
-
-    // Card spotlight
-    document.querySelectorAll(".card").forEach((card) => {
-      card.addEventListener("pointermove", (e) => {
-        const rect = card.getBoundingClientRect();
-        card.style.setProperty("--x", `${e.clientX - rect.left}px`);
-        card.style.setProperty("--y", `${e.clientY - rect.top}px`);
-      });
-    });
-
-    // Hero card tilt
-    const tilt = document.getElementById("tilt");
-    if (tilt) {
-      tilt.addEventListener("pointermove", (e) => {
-        const r = tilt.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width - 0.5;
-        const y = (e.clientY - r.top) / r.height - 0.5;
-        tilt.style.transform = `rotateY(${x * 10}deg) rotateX(${-y * 10}deg)`;
-      });
-      tilt.addEventListener("pointerleave", () => {
-        tilt.style.transform = "rotateY(0deg) rotateX(0deg)";
-      });
-    }
-  </script>
+  <footer class="footer wrap"><span>© <span id="year">2026</span> Zikai Zhao</span><a href="#top">Back to top ↑</a></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
